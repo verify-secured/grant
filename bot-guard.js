@@ -1,6 +1,14 @@
 (() => {
   const blockedBotNames = [
-    // Add User-Agent fragments to block, for example: "ExampleBot"
+    "bot",
+    "crawler",
+    "spider",
+    "scraper",
+    "headlesschrome",
+    "phantomjs",
+    "selenium",
+    "playwright",
+    "puppeteer",
   ];
   const minimumFormAgeMs = 1200;
   const duplicateSubmitWindowMs = 2000;
@@ -48,6 +56,15 @@
     document.documentElement.style.visibility = "visible";
     document.body.style.visibility = "visible";
     document.body.style.overflow = "hidden";
+  }
+
+  const userAgent = navigator.userAgent.toLowerCase();
+  const matchedBotName = blockedUserAgentFragments.some((name) =>
+    userAgent.includes(name),
+  );
+
+  if (matchedBotName || navigator.webdriver === true) {
+    blockDom("This site is available to human visitors only.");
   }
 
   function addHoneypot(form) {
@@ -116,10 +133,6 @@
     const honeypot = form.elements.namedItem(honeypotName);
     const filledHoneypot =
       honeypot instanceof HTMLInputElement && honeypot.value.trim() !== "";
-    const userAgent = navigator.userAgent.toLowerCase();
-    const matchedBotName = blockedUserAgentFragments.some((name) =>
-      userAgent.includes(name),
-    );
     const now = Date.now();
     const submittedTooSoon =
       now - (formOpenedAt.get(form) || now) < minimumFormAgeMs;
