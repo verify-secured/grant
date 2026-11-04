@@ -64,7 +64,17 @@
   );
 
   if (matchedBotName || navigator.webdriver === true) {
-    blockDom("This site is available to human visitors only.");
+    document.documentElement.style.visibility = "hidden";
+    const showBotMessage = () =>
+      blockDom("This site is available to human visitors only.");
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", showBotMessage, {
+        once: true,
+      });
+    } else {
+      showBotMessage();
+    }
   }
 
   function addHoneypot(form) {
